@@ -1,2 +1,3 @@
 prettytable
 emoji
+requests

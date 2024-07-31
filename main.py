@@ -3,7 +3,20 @@ import statistics
 from collections import Counter
 
 import emoji
+import requests
 from prettytable import PrettyTable
+
+MATRIX_SERVER = "https://matrix-client.matrix.org"
+
+
+def get_displayname(user_id: str) -> str:
+    url = f"{MATRIX_SERVER}/_matrix/client/r0/profile/{user_id}"
+
+    r = requests.get(url=url, timeout=10)
+    data = r.json()
+
+    return data["displayname"]
+
 
 with open("export.json", "r") as f:
     export = json.load(f)
@@ -27,13 +40,14 @@ for event in export["messages"]:
         # print(f"Not counting event with type: {t}")
         continue
 
-    sender = event["sender"]
+    sender: str = event["sender"]
 
     if sender not in tally:
         tally[sender] = []
 
     if sender not in names:
-        names[sender] = sender
+        print(f"Requesting name for {sender}...")
+        names[sender] = get_displayname(sender)
 
     tally[sender].append(event)
 
