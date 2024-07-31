@@ -67,7 +67,11 @@ for yapper, events in count.items():
     percent = f"{round(len(events) / total_count * 100, 2)} %"
     mean_length = round(
         statistics.mean(
-            [len((e["content"].get("body") or "").split()) for e in events]
+            [
+                len((e["content"]["body"]).split())
+                for e in events
+                if "body" in e["content"]
+            ]
         ),
         2,
     )
